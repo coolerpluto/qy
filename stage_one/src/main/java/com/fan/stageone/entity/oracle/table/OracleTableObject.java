@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle;
+package com.fan.stageone.entity.oracle.table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,19 +6,13 @@ import java.util.List;
 public class OracleTableObject {
     private String tableName;
 
-    private String tableOwner;
-
-    private String tableSpacename;
-
     private List<OracleTableColumn> oracleTableColumnList = new ArrayList<OracleTableColumn>();
 
     public OracleTableObject() {
     }
 
-    public OracleTableObject(String tableName, String tableOwner, String tableSpacename, List<OracleTableColumn> oracleTableColumnList) {
+    public OracleTableObject(String tableName, List<OracleTableColumn> oracleTableColumnList) {
         this.tableName = tableName;
-        this.tableOwner = tableOwner;
-        this.tableSpacename = tableSpacename;
         this.oracleTableColumnList = oracleTableColumnList;
     }
 
@@ -28,22 +22,6 @@ public class OracleTableObject {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
-    }
-
-    public String getTableOwner() {
-        return tableOwner;
-    }
-
-    public void setTableOwner(String tableOwner) {
-        this.tableOwner = tableOwner;
-    }
-
-    public String getTableSpacename() {
-        return tableSpacename;
-    }
-
-    public void setTableSpacename(String tableSpacename) {
-        this.tableSpacename = tableSpacename;
     }
 
     public List<OracleTableColumn> getOracleTableColumnList() {
@@ -56,11 +34,9 @@ public class OracleTableObject {
 
     @Override
     public String toString() {
-        return "TableObject{" +
+        return "OracleTableObject{" +
                 "tableName='" + tableName + '\'' +
-                ", tableOwner='" + tableOwner + '\'' +
-                ", tableSpacename='" + tableSpacename + '\'' +
-                ", tableColumnList=" + oracleTableColumnList +
+                ", oracleTableColumnList=" + oracleTableColumnList +
                 '}';
     }
 }
