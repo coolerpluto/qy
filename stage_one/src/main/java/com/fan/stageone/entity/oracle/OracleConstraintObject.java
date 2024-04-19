@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle.constraint;
+package com.fan.stageone.entity.oracle;
 
 public class OracleConstraintObject {
     private String  constraintName;

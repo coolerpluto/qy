@@ -1,7 +1,7 @@
 package com.fan.stageone.getObject.oracle;
 
 import com.fan.stageone.constants.OracleConnectVars;
-import com.fan.stageone.entity.oracle.index.OracleIndexObject;
+import com.fan.stageone.entity.oracle.OracleIndexObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

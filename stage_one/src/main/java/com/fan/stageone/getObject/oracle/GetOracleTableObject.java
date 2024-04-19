@@ -1,8 +1,8 @@
 package com.fan.stageone.getObject.oracle;
 
 import com.fan.stageone.constants.OracleConnectVars;
-import com.fan.stageone.entity.oracle.table.OracleTableColumn;
-import com.fan.stageone.entity.oracle.table.OracleTableObject;
+import com.fan.stageone.entity.oracle.OracleTableColumn;
+import com.fan.stageone.entity.oracle.OracleTableObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +53,7 @@ public class GetOracleTableObject {
             for (String tname : tableNames) {
                 //构建根据表名查询：字段名称，字段类型，字段长度，字段所属表
                 String queryColumns = "SELECT TABLE_NAME ,COLUMN_NAME ,DATA_TYPE ,DATA_LENGTH FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '" + tname + "'";
+                //用preparedstatement，有缓存，性能好
                 //执行查询语句
                 ResultSet resultSet = statement.executeQuery(queryColumns);
                 while (resultSet.next()){

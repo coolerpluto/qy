@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle.view;
+package com.fan.stageone.entity.oracle;
 
 public class OracleViewObject {
     private String viewName;

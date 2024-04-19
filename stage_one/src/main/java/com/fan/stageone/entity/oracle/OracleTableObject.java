@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle.table;
+package com.fan.stageone.entity.oracle;
 
 import java.util.ArrayList;
 import java.util.List;

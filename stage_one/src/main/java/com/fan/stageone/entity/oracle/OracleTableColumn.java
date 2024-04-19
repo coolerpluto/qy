@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle.table;
+package com.fan.stageone.entity.oracle;
 
 public class OracleTableColumn {
     private String columnName;

@@ -1,8 +1,8 @@
 package com.fan.stageone.test;
 
 import com.fan.stageone.constants.OracleConnectVars;
-import com.fan.stageone.entity.oracle.table.OracleTableColumn;
-import com.fan.stageone.entity.oracle.table.OracleTableObject;
+import com.fan.stageone.entity.oracle.OracleTableColumn;
+import com.fan.stageone.entity.oracle.OracleTableObject;
 
 import java.sql.*;
 import java.util.ArrayList;

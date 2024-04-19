@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle.index;
+package com.fan.stageone.entity.oracle;
 
 public class OracleIndexObject {
     private String indexName;
