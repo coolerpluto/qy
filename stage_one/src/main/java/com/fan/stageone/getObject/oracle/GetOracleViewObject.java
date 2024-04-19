@@ -13,6 +13,8 @@ public class GetOracleViewObject {
 
     private static final Logger logger = LoggerFactory.getLogger(GetOracleViewObject.class);
 
+    private static final String QUERY_SQL = "SELECT VIEW_NAME ,TEXT  FROM user_views";
+
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
         getOracleViewObjectList(connection);
@@ -21,9 +23,8 @@ public class GetOracleViewObject {
 
     public static List<OracleViewObject> getOracleViewObjectList(Connection connection){
         ArrayList<OracleViewObject> oracleViewObjectList = new ArrayList<>();
-        try (Statement statement = connection.createStatement()){
-            String queryView = "SELECT VIEW_NAME ,TEXT  FROM user_views";
-            ResultSet resultSet = statement.executeQuery(queryView);
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_SQL)){
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()){
                 String viewName = resultSet.getString("VIEW_NAME");
                 String text = resultSet.getString("TEXT");

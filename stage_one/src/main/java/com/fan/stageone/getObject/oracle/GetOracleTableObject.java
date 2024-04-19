@@ -18,6 +18,8 @@ public class GetOracleTableObject {
 
     private static final String ALL_TABLES_SQL = "SELECT TABLE_NAME FROM all_tables";
 
+    private static final String QUERY_COLUMNS_BY_TABLE_NAME_SQL = "SELECT TABLE_NAME ,COLUMN_NAME ,DATA_TYPE ,DATA_LENGTH FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ?";
+
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
 //        getTableNames(connection);
@@ -30,8 +32,8 @@ public class GetOracleTableObject {
     public static List<String> getTableNameList(Connection connection){
         //初始化数组存放表名
         List<String> tableNameList = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(USER_TABLES_SQL)){
+        try (PreparedStatement statement = connection.prepareStatement(USER_TABLES_SQL);
+        ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()){
                 //循环获取表名，放入表名数组
                 String tableName = resultSet.getString("TABLE_NAME");
@@ -46,16 +48,14 @@ public class GetOracleTableObject {
     }
 
     //根据传入的表名获取表的字段对象数组
-    public static List<OracleTableColumn> getColumnsByTableName(Connection connection, String... tableNames){
+    public static List<OracleTableColumn> getColumnsByTableName(Connection connection, String... tableNames) throws SQLException {
         //初始化数组存放字段对象
         List<OracleTableColumn> oracleTableColumnList = new ArrayList<>();
-        try (Statement statement = connection.createStatement()){
-            for (String tname : tableNames) {
-                //构建根据表名查询：字段名称，字段类型，字段长度，字段所属表
-                String queryColumns = "SELECT TABLE_NAME ,COLUMN_NAME ,DATA_TYPE ,DATA_LENGTH FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '" + tname + "'";
-                //用preparedstatement，有缓存，性能好
-                //执行查询语句
-                ResultSet resultSet = statement.executeQuery(queryColumns);
+        ResultSet resultSet = null;
+        for (String tName : tableNames) {
+            try(PreparedStatement statement = connection.prepareStatement(QUERY_COLUMNS_BY_TABLE_NAME_SQL)){
+                statement.setString(1,tName);
+                resultSet = statement.executeQuery();
                 while (resultSet.next()){
                     String tableName = resultSet.getString("TABLE_NAME");//获取字段所属表名
                     String columnName = resultSet.getString("COLUMN_NAME");//获取字段名称
@@ -68,15 +68,14 @@ public class GetOracleTableObject {
                     oracleTableColumnList.add(oracleTableColumn);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+        resultSet.close();
         //返回结果
         return oracleTableColumnList;
     }
 
     //获取表对象
-    public static List<OracleTableObject> getOracleObjectList(Connection connection){
+    public static List<OracleTableObject> getOracleObjectList(Connection connection) throws SQLException {
         //获取当前用户拥有的表
         List<String> tableNames = getTableNameList(connection);
         //初始化数组存放表对象

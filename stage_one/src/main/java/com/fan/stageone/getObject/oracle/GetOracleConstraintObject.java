@@ -13,7 +13,7 @@ public class GetOracleConstraintObject {
     private static final Logger logger = LoggerFactory.getLogger(GetOracleConstraintObject.class);
 
     //定义查询约束名称、约束类型、约束字段名称、约束所在表名的sql语句
-    private static final String queryConstraintList = "SELECT uc.CONSTRAINT_NAME ,uc.CONSTRAINT_TYPE, ucc.COLUMN_NAME,uc.TABLE_NAME\n" +
+    private static final String QUERY_SQL = "SELECT uc.CONSTRAINT_NAME ,uc.CONSTRAINT_TYPE, ucc.COLUMN_NAME,uc.TABLE_NAME\n" +
             "FROM user_tables ut\n" +
             "JOIN USER_CONSTRAINTS uc ON ut.TABLE_NAME = uc.TABLE_NAME \n" +
             "JOIN USER_CONS_COLUMNS ucc ON uc.CONSTRAINT_NAME = ucc.CONSTRAINT_NAME ";
@@ -27,8 +27,8 @@ public class GetOracleConstraintObject {
     public static List<OracleConstraintObject> getOracleConstraintObjectList(Connection connection){
         //初始化对象数组
         List<OracleConstraintObject> oracleConstraintObjectList = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(queryConstraintList)){
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_SQL);
+             ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()){
                 String constraintName = resultSet.getString("CONSTRAINT_NAME");
                 String constraintType = resultSet.getString("CONSTRAINT_TYPE");

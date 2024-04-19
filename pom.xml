@@ -40,6 +40,11 @@
                 <version>1.7.32</version> <!-- 版本号可以根据需要更改 -->
                 <scope>runtime</scope> <!-- runtime 作用域表示该依赖项仅在运行时生效 -->
             </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.26</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

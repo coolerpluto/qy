@@ -13,7 +13,7 @@ public class GetOracleIndexObject {
     private static final Logger logger = LoggerFactory.getLogger(GetOracleIndexObject.class);
 
     //获取索引名称、索引所加字段名称、索引类型、索引所在表名
-    private static final String queryIndexInfo = "SELECT ui.INDEX_NAME  , uic.COLUMN_NAME ,uc.CONSTRAINT_TYPE, ui.TABLE_NAME\n" +
+    private static final String QUERY_SQL = "SELECT ui.INDEX_NAME  , uic.COLUMN_NAME ,uc.CONSTRAINT_TYPE, ui.TABLE_NAME\n" +
             "FROM user_tables ut\n" +
             "JOIN user_indexes ui ON ut.TABLE_NAME = ui.TABLE_NAME \n" +
             "JOIN USER_IND_COLUMNS uic ON ui.INDEX_NAME = uic.INDEX_NAME \n" +
@@ -29,8 +29,8 @@ public class GetOracleIndexObject {
     public static List<OracleIndexObject> getOracleIndexObjectList(Connection connection){
         //初始化对象数组
         List<OracleIndexObject> oracleIndexObjectList = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(queryIndexInfo)){
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_SQL);
+             ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()){
                 String indexName = resultSet.getString("INDEX_NAME");
                 String columnName = resultSet.getString("COLUMN_NAME");
