@@ -1,14 +1,15 @@
 package com.fan.stageone.getObject.oracle;
 
-import com.fan.stageone.constants.OracleConnectVars;
 import com.fan.stageone.entity.oracle.OracleIndexObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class GetOracleIndexObject {
     private static final Logger logger = LoggerFactory.getLogger(GetOracleIndexObject.class);
 
@@ -19,14 +20,8 @@ public class GetOracleIndexObject {
             "JOIN USER_IND_COLUMNS uic ON ui.INDEX_NAME = uic.INDEX_NAME \n" +
             "JOIN USER_CONSTRAINTS uc ON ui.INDEX_NAME = uc.CONSTRAINT_NAME ";
 
-    public static void main(String[] args) throws SQLException {
-        Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
-        getOracleIndexObjectList(connection);
-        connection.close();
-    }
-
     //获取索引对象数组
-    public static List<OracleIndexObject> getOracleIndexObjectList(Connection connection){
+    public List<OracleIndexObject> getOracleIndexObjectList(Connection connection){
         //初始化对象数组
         List<OracleIndexObject> oracleIndexObjectList = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(QUERY_SQL);

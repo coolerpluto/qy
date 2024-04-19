@@ -1,14 +1,15 @@
 package com.fan.stageone.getObject.oracle;
 
-import com.fan.stageone.constants.OracleConnectVars;
 import com.fan.stageone.entity.oracle.OracleConstraintObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class GetOracleConstraintObject {
     private static final Logger logger = LoggerFactory.getLogger(GetOracleConstraintObject.class);
 
@@ -18,13 +19,8 @@ public class GetOracleConstraintObject {
             "JOIN USER_CONSTRAINTS uc ON ut.TABLE_NAME = uc.TABLE_NAME \n" +
             "JOIN USER_CONS_COLUMNS ucc ON uc.CONSTRAINT_NAME = ucc.CONSTRAINT_NAME ";
 
-    public static void main(String[] args) throws SQLException {
-        Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
-        getOracleConstraintObjectList(connection);
-    }
-
     //获取约束对象
-    public static List<OracleConstraintObject> getOracleConstraintObjectList(Connection connection){
+    public List<OracleConstraintObject> getOracleConstraintObjectList(Connection connection){
         //初始化对象数组
         List<OracleConstraintObject> oracleConstraintObjectList = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(QUERY_SQL);

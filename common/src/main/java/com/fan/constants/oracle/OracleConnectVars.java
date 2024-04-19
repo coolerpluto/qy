@@ -1,4 +1,4 @@
-package com.fan.stageone.constants;
+package com.fan.constants.oracle;
 
 public interface OracleConnectVars {
     String DRIVER = "oracle.jdbc.driver.OracleDriver";

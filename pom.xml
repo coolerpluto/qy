@@ -9,12 +9,20 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>stage_one</module>
+        <module>common</module>
     </modules>
 
     <packaging>pom</packaging>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.6.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 <!--            连接数据库，下载oracle jdbc驱动-->
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
@@ -26,13 +34,6 @@
                 <artifactId>orai18n</artifactId>
                 <version>19.3.0.0</version>
             </dependency>
-            <!-- SLF4J API -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.32</version> <!-- 版本号可以根据需要更改 -->
-            </dependency>
-
             <!-- Log4j 日志桥接器 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -45,7 +46,11 @@
                 <artifactId>lombok</artifactId>
                 <version>1.18.26</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.0</version> <!-- 这里可以替换为你需要的 Jackson 版本 -->
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @ToString
-public class OracleTableObject {
+public class OracleTableObject implements Serializable {
     private String tableName;
-    private List<OracleTableColumn> oracleTableColumnList = new ArrayList<OracleTableColumn>();
+    private List<OracleColumnObject> oracleColumnObjectList = new ArrayList<OracleColumnObject>();
 }

@@ -5,11 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @ToString
-public class OracleTableColumn {
+public class OracleColumnObject implements Serializable {
     private String columnName;
     private String columnType;
     private int columnSize;
