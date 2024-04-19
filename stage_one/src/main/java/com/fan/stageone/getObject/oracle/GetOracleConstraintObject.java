@@ -1,4 +1,4 @@
-package com.fan.stageone.databaseObject.oracle;
+package com.fan.stageone.getObject.oracle;
 
 import com.fan.stageone.constants.OracleConnectVars;
 import com.fan.stageone.entity.oracle.constraint.OracleConstraintObject;

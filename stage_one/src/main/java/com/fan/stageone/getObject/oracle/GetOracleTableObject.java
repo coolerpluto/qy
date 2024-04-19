@@ -1,4 +1,4 @@
-package com.fan.stageone.databaseObject.oracle;
+package com.fan.stageone.getObject.oracle;
 
 import com.fan.stageone.constants.OracleConnectVars;
 import com.fan.stageone.entity.oracle.table.OracleTableColumn;
@@ -14,22 +14,28 @@ public class GetOracleTableObject {
 
     private static final Logger logger = LoggerFactory.getLogger(GetOracleTableObject.class);
 
+    private static final String USER_TABLES_SQL = "SELECT TABLE_NAME FROM user_tables";
+
+    private static final String ALL_TABLES_SQL = "SELECT TABLE_NAME FROM all_tables";
+
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
-        getOracleObjects(connection);
+//        getTableNames(connection);
+//        getColumnsByTableName(connection);
+        getOracleObjectList(connection);
         connection.close();
     }
 
     //获取当前用户拥有的所有表名
-    public static List<String> getTableNames(Connection connection){
+    public static List<String> getTableNameList(Connection connection){
         //初始化数组存放表名
         List<String> tableNameList = new ArrayList<>();
-        String queryTableNames = "SELECT TABLE_NAME FROM user_tables";
         try (Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(queryTableNames)){
+        ResultSet resultSet = statement.executeQuery(USER_TABLES_SQL)){
             while (resultSet.next()){
                 //循环获取表名，放入表名数组
                 String tableName = resultSet.getString("TABLE_NAME");
+//                logger.info("获取的表名：{}",tableName);
                 tableNameList.add(tableName);
             }
         } catch (SQLException e) {
@@ -69,9 +75,9 @@ public class GetOracleTableObject {
     }
 
     //获取表对象
-    public static List<OracleTableObject> getOracleObjects(Connection connection){
+    public static List<OracleTableObject> getOracleObjectList(Connection connection){
         //获取当前用户拥有的表
-        List<String> tableNames = getTableNames(connection);
+        List<String> tableNames = getTableNameList(connection);
         //初始化数组存放表对象
         ArrayList<OracleTableObject> oracleTableObjects = new ArrayList<>();
         //循环遍历表名，通过表名查询字段对象

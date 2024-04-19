@@ -1,4 +1,4 @@
-package com.fan.stageone.databaseObject.oracle;
+package com.fan.stageone.getObject.oracle;
 
 import com.fan.stageone.constants.OracleConnectVars;
 import com.fan.stageone.entity.oracle.index.OracleIndexObject;
@@ -21,12 +21,12 @@ public class GetOracleIndexObject {
 
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
-        getOracleIndexObjects(connection);
+        getOracleIndexObjectList(connection);
         connection.close();
     }
 
     //获取索引对象数组
-    public static List<OracleIndexObject> getOracleIndexObjects(Connection connection){
+    public static List<OracleIndexObject> getOracleIndexObjectList(Connection connection){
         //初始化对象数组
         List<OracleIndexObject> oracleIndexObjectList = new ArrayList<>();
         try (Statement statement = connection.createStatement();

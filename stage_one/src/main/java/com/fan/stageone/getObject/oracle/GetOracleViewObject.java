@@ -1,4 +1,4 @@
-package com.fan.stageone.databaseObject.oracle;
+package com.fan.stageone.getObject.oracle;
 
 import com.fan.stageone.constants.OracleConnectVars;
 import com.fan.stageone.entity.oracle.view.OracleViewObject;
@@ -15,11 +15,11 @@ public class GetOracleViewObject {
 
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection(OracleConnectVars.URL, OracleConnectVars.USERNAME, OracleConnectVars.PASSWORD);
-        getOracleViewObject(connection);
+        getOracleViewObjectList(connection);
         connection.close();
     }
 
-    public static List<OracleViewObject> getOracleViewObject(Connection connection){
+    public static List<OracleViewObject> getOracleViewObjectList(Connection connection){
         ArrayList<OracleViewObject> oracleViewObjectList = new ArrayList<>();
         try (Statement statement = connection.createStatement()){
             String queryView = "SELECT VIEW_NAME ,TEXT  FROM user_views";
