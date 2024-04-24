@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle;
+package com.fan.common.entity.postgres;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @ToString
-public class OracleViewObject implements Serializable {
+public class PostgresViewObject implements Serializable {
     private String viewName;
     private String viewDesc;
 }

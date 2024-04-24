@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle;
+package com.fan.common.entity.postgres;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +11,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @ToString
-public class OracleConstraintObject implements Serializable {
-    private String  constraintName;
-    private String constraintType;
+public class PostgresColumnObject implements Serializable {
     private String columnName;
+    private String columnType;
+    private int columnSize;
     private String tableName;
 }

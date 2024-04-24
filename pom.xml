@@ -16,18 +16,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.6.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 <!--            连接数据库，下载oracle jdbc驱动-->
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
-                <version>19.3.0.0</version> <!-- 根据你的Oracle数据库版本选择 -->
+                <version>19.3.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.oracle.database.nls</groupId>
@@ -38,9 +31,8 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.32</version> <!-- 版本号可以根据需要更改 -->
-                <scope>runtime</scope> <!-- runtime 作用域表示该依赖项仅在运行时生效 -->
-            </dependency>
+                <version>1.7.32</version>
+                </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -49,7 +41,17 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.0</version> <!-- 这里可以替换为你需要的 Jackson 版本 -->
+                <version>2.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.28</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.3.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

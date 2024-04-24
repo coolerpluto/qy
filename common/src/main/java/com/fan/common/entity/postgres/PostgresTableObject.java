@@ -1,4 +1,4 @@
-package com.fan.stageone.entity.oracle;
+package com.fan.common.entity.postgres;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @ToString
-public class OracleTableObject implements Serializable {
+public class PostgresTableObject implements Serializable {
     private String tableName;
-    private List<OracleColumnObject> oracleColumnObjectList = new ArrayList<OracleColumnObject>();
+    private List<PostgresColumnObject> columnObjectList = new ArrayList<>();
 }
