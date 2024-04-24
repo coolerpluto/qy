@@ -1,12 +1,13 @@
 package com.fan.stageone.options;
 
 import com.fan.common.convert.ColumnConvertDict;
-import com.fan.common.entity.oracle.DbColumnObject;
+import com.fan.common.entity.oracle.OracleColumnObject;
 import com.fan.common.entity.oracle.OracleConstraintObject;
 import com.fan.common.entity.oracle.OracleIndexObject;
 import com.fan.common.entity.oracle.OracleTableObject;
 import com.fan.common.entity.postgres.PostgresTableObject;
 import com.fan.common.sql.PostgresSql;
+import oracle.ucp.proxy.annotation.Pre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,7 @@ public class PostgresOptions {
                 builder.append("CREATE TABLE ")
                         .append(tableName)
                         .append("(");
-                for (DbColumnObject oracleColumnObject : oracleTableObject.getOracleColumnObjectList()) {
+                for (OracleColumnObject oracleColumnObject : oracleTableObject.getOracleColumnObjectList()) {
                     builder.append(oracleColumnObject.getColumnName())
                             .append(" ")
                             .append(ColumnConvertDict.columnTypeConvert(oracleColumnObject.getColumnType()))

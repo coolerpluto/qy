@@ -15,5 +15,5 @@ import java.util.List;
 @ToString
 public class OracleTableObject implements Serializable {
     private String tableName;
-    private List<DbColumnObject> oracleColumnObjectList = new ArrayList<DbColumnObject>();
+    private List<OracleColumnObject> oracleColumnObjectList = new ArrayList<OracleColumnObject>();
 }

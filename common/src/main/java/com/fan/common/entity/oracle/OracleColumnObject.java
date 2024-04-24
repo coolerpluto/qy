@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @ToString
-public class DbColumnObject implements Serializable {
+public class OracleColumnObject implements Serializable {
     private String columnName;
     private String columnType;
     private int columnSize;

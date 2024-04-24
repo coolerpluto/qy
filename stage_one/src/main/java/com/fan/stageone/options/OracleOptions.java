@@ -49,14 +49,14 @@ public class OracleOptions {
      * @return
      * @throws SQLException
      */
-    public static Map<String, List<DbColumnObject>> getColumnsByTableName(Connection connection, List<String> tableNameList) throws SQLException {
+    public static Map<String, List<OracleColumnObject>> getColumnsByTableName(Connection connection, List<String> tableNameList) throws SQLException {
         if (tableNameList == null){
             tableNameList = getTableNameList(connection);
         }
-        HashMap<String, List<DbColumnObject>> map = new HashMap<>();
+        HashMap<String, List<OracleColumnObject>> map = new HashMap<>();
         ResultSet resultSet = null;
         for (String tName : tableNameList) {
-            List<DbColumnObject> oracleColumnObjectList = new ArrayList<>();
+            List<OracleColumnObject> oracleColumnObjectList = new ArrayList<>();
             try(PreparedStatement statement = connection.prepareStatement(QUERY_COLUMNS_BY_TABLE_NAME_SQL)){
                 statement.setString(1,tName);
                 resultSet = statement.executeQuery();
@@ -66,7 +66,7 @@ public class OracleOptions {
                     String columnType = resultSet.getString("DATA_TYPE");//获取字段类型
                     int columnSize = resultSet.getInt("DATA_LENGTH");//获取字段长度
                     //把查出来的信息创建到一个字段对象里
-                    DbColumnObject oracleColumnObject = new DbColumnObject(columnName, columnType, columnSize, tableName);
+                    OracleColumnObject oracleColumnObject = new OracleColumnObject(columnName, columnType, columnSize, tableName);
                     logger.info("获取oracle字段对象：{}",oracleColumnObject);
                     //把字段对象放入数组里
                     oracleColumnObjectList.add(oracleColumnObject);
@@ -87,9 +87,9 @@ public class OracleOptions {
      * @throws SQLException
      */
     public static List<OracleTableObject> getOracleObjectList(Connection connection) throws SQLException {
-        Map<String, List<DbColumnObject>> map = getColumnsByTableName(connection, null);
+        Map<String, List<OracleColumnObject>> map = getColumnsByTableName(connection, null);
         ArrayList<OracleTableObject> list = new ArrayList<>();
-        for (Map.Entry<String, List<DbColumnObject>> entry : map.entrySet()){
+        for (Map.Entry<String, List<OracleColumnObject>> entry : map.entrySet()){
             OracleTableObject oracleTableObject = new OracleTableObject(entry.getKey(), entry.getValue());
             logger.info("获取oracle表对象:{}", oracleTableObject);
             list.add(oracleTableObject);
