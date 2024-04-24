@@ -18,7 +18,7 @@ public interface PostgresOptions extends DbOptions{
 
     void createTableByDDL(Connection connection, Map<String, String> map) throws SQLException;
 
-    void createConstraintByDDL(Connection connection, List<DbConstraintObject> constraintObjectList);
+    void createConstraintByDDL(Connection connection, Map<String, List<String>>);
 
     void createIndexByDDL(Map<String, List<String>> map);
 

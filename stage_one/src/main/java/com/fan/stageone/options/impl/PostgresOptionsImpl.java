@@ -42,6 +42,12 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public Map<String, List<String>> getConstraintDDL(List<DbConstraintObject> objectList) {
+        Map<String, DbConstraintObject> constraintObjectMap = new HashMap<>();
+        for (DbConstraintObject dbConstraintObject : objectList) {
+            if (constraintObjectMap.containsKey((String)dbConstraintObject.getConstraintName())){
+
+            }
+        }
         return null;
     }
 
@@ -79,7 +85,7 @@ public class PostgresOptionsImpl implements PostgresOptions {
     }
 
     @Override
-    public void createConstraintByDDL(Connection connection, List<DbConstraintObject> constraintObjectList) {
+    public void createConstraintByDDL(Connection connection, Map<String, List<String>>) {
 
     }
 
