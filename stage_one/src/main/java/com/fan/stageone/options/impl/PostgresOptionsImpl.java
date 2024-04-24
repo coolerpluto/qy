@@ -20,7 +20,24 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public Map<String, String> getTableDDL(List<DbTableObject> objectList) {
-        return null;
+        Map<String, String > map = new HashMap<>();
+        for (DbTableObject tableObject : objectList) {
+            String tableName = tableObject.getTableName();
+            StringBuilder builder = new StringBuilder("CREATE TABLE "+tableName+"(");
+            List<DbColumnObject> columnObjectList = tableObject.getDbColumnObjectList();
+            for (DbColumnObject columnObject : columnObjectList) {
+                builder.append(columnObject.getColumnName())
+                        .append(" ")
+                        .append(ColumnConvertDict.columnTypeConvert(columnObject.getColumnType()))
+                        .append("(")
+                        .append(columnObject.getColumnSize())
+                        .append("), ");
+            }
+            String ddl = builder.delete(builder.length() - 2, builder.length()).append(")").toString();
+            logger.info("获取表{}的ddl语句{}", tableName, ddl);
+            map.put(tableName, ddl);
+        }
+        return map;
     }
 
     @Override
@@ -34,12 +51,35 @@ public class PostgresOptionsImpl implements PostgresOptions {
     }
 
     @Override
-    public void creteTableByDDL(Connection connection, Map<String, String> map) {
-
+    public void createTableByDDL(Connection connection, Map<String, String> map) throws SQLException {
+        connection.setAutoCommit(false);
+        try(Statement statement = connection.createStatement()) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                statement.addBatch(entry.getValue());
+            }
+            statement.executeBatch();
+            connection.commit();
+            logger.info("表创建成功");
+        } catch (SQLException e) {
+            logger.error("表创建失败，回滚事务");
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException sqlException) {
+                logger.error("回滚失败");
+                sqlException.printStackTrace();
+            }
+        }finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
-    public void createConstraintByDDL(Map<String, List<String>> map) {
+    public void createConstraintByDDL(Connection connection, List<DbConstraintObject> constraintObjectList) {
 
     }
 
@@ -80,6 +120,8 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public Map<String, List<DbColumnObject>> getDbColumnObjectList(Connection connection) {
+        Map<String, List<DbColumnObject>> map = new HashMap<>();
+        List<DbColumnObject> list = new ArrayList<>();
         return null;
     }
 

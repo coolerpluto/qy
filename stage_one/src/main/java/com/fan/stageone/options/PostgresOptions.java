@@ -5,6 +5,7 @@ import com.fan.common.entity.DbIndexObject;
 import com.fan.common.entity.DbTableObject;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,9 @@ public interface PostgresOptions extends DbOptions{
 
     Map<String, List<String>> getIndexDDL(List<DbIndexObject> objectList);
 
-    void creteTableByDDL(Connection connection, Map<String, String> map);
+    void createTableByDDL(Connection connection, Map<String, String> map) throws SQLException;
 
-    void createConstraintByDDL(Map<String, List<String>> map);
+    void createConstraintByDDL(Connection connection, List<DbConstraintObject> constraintObjectList);
 
     void createIndexByDDL(Map<String, List<String>> map);
 

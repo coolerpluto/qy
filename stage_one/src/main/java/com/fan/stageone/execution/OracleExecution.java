@@ -9,5 +9,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class OracleExecution {
-
+    public static void main(String[] args) throws SQLException {
+        Connection connection = DbUtil.getDatabaseConnection(null, DbType.ORACLE);
+        OracleOptionsImpl oracleOptions = new OracleOptionsImpl();
+        oracleOptions.getDbTableObjectList(connection);
+        oracleOptions.getDbConstraintObjectList(connection);
+    }
 }

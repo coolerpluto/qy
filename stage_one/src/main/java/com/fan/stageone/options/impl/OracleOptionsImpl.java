@@ -55,34 +55,31 @@ public class OracleOptionsImpl implements OracleOptions {
         List<String> tableNameList = getDbTableNameList(connection);
         Map<String, List<DbColumnObject>> map = new HashMap<>();
         ResultSet resultSet = null;
-        for (String tName : tableNameList) {
-            List<DbColumnObject> dbColumnObjectList = new ArrayList<>();
-            try(PreparedStatement statement = connection.prepareStatement(QUERY_COLUMNS_BY_TABLE_NAME_SQL)){
-                statement.setString(1,tName);
+        try(PreparedStatement statement = connection.prepareStatement(QUERY_COLUMNS_BY_TABLE_NAME_SQL)) {
+            for (String tableName : tableNameList) {
+                List<DbColumnObject> dbColumnObjectList = new ArrayList<>();
+                statement.setString(1, tableName);
                 resultSet = statement.executeQuery();
                 while (resultSet.next()){
-                    String tableName = resultSet.getString("TABLE_NAME");//获取字段所属表名
-                    String columnName = resultSet.getString("COLUMN_NAME");//获取字段名称
-                    String columnType = resultSet.getString("DATA_TYPE");//获取字段类型
-                    int columnSize = resultSet.getInt("DATA_LENGTH");//获取字段长度
-                    //把查出来的信息创建到一个字段对象里
-                    DbColumnObject dbColumnObject = new DbColumnObject(columnName, columnType, columnSize, tableName);
-                    logger.info("获取oracle字段对象：{}", dbColumnObject);
-                    //把字段对象放入数组里
-                    dbColumnObjectList.add(dbColumnObject);
+                    String table_name = resultSet.getString("TABLE_NAME");
+                    String column_name = resultSet.getString("COLUMN_NAME");
+                    String data_type = resultSet.getString("DATA_TYPE");
+                    int data_length = resultSet.getInt("DATA_LENGTH");
+                    DbColumnObject columnObject = new DbColumnObject(column_name, data_type, data_length, tableName);
+                    logger.info("获取到的字段对象：{}", columnObject);
+                    dbColumnObjectList.add(columnObject);
                 }
-                map.put(tName, dbColumnObjectList);
+                map.put(tableName, dbColumnObjectList);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                resultSet.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
             }
         }
-        //返回结果
         return map;
     }
 
@@ -94,7 +91,7 @@ public class OracleOptionsImpl implements OracleOptions {
      */
     @Override
     public List<DbTableObject> getDbTableObjectList(Connection connection){
-        Map<String, List<DbColumnObject>> map = getDbColumnObjectListByTableName(connection, null);
+        Map<String, List<DbColumnObject>> map = getDbColumnObjectList(connection);
         ArrayList<DbTableObject> list = new ArrayList<>();
         for (Map.Entry<String, List<DbColumnObject>> entry : map.entrySet()){
             DbTableObject dbTableObject = new DbTableObject(entry.getKey(), entry.getValue());
