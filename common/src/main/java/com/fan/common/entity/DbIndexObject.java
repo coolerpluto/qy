@@ -1,4 +1,4 @@
-package com.fan.common.entity.postgres;
+package com.fan.common.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +11,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @ToString
-public class PostgresConstraintObject implements Serializable {
-    private String  constraintName;
-    private String constraintType;
+public class DbIndexObject implements Serializable {
+    private String indexName;
     private String columnName;
+    private String indexType;
     private String tableName;
 }

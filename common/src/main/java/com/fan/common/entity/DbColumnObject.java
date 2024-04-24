@@ -1,4 +1,4 @@
-package com.fan.common.entity.oracle;
+package com.fan.common.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @ToString
-public class OracleColumnObject implements Serializable {
+public class DbColumnObject implements Serializable {
     private String columnName;
     private String columnType;
     private int columnSize;

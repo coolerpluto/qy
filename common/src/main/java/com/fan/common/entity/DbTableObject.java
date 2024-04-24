@@ -1,4 +1,4 @@
-package com.fan.common.entity.postgres;
+package com.fan.common.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @ToString
-public class PostgresTableObject implements Serializable {
+public class DbTableObject implements Serializable {
     private String tableName;
-    private List<PostgresColumnObject> columnObjectList = new ArrayList<>();
+    private List<DbColumnObject> dbColumnObjectList = new ArrayList<DbColumnObject>();
 }
