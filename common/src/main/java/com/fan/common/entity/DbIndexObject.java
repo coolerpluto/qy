@@ -14,6 +14,5 @@ import java.io.Serializable;
 public class DbIndexObject implements Serializable {
     private String indexName;
     private String columnName;
-    private String indexType;
     private String tableName;
 }

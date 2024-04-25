@@ -115,10 +115,9 @@ public class OracleOptionsImpl implements OracleOptions {
             while (resultSet.next()){
                 String indexName = resultSet.getString("INDEX_NAME");
                 String columnName = resultSet.getString("COLUMN_NAME");
-                String constraintType = resultSet.getString("CONSTRAINT_TYPE");
                 String tableName = resultSet.getString("TABLE_NAME");
                 //构造索引对象
-                DbIndexObject dbIndexObject = new DbIndexObject(indexName, columnName, constraintType, tableName);
+                DbIndexObject dbIndexObject = new DbIndexObject(indexName, columnName, tableName);
                 logger.info("获取oracle索引对象：{}", dbIndexObject);
                 //放入索引对象数组
                 dbIndexObjectList.add(dbIndexObject);
@@ -145,8 +144,10 @@ public class OracleOptionsImpl implements OracleOptions {
                 String constraintType = resultSet.getString("CONSTRAINT_TYPE");
                 String columnName = resultSet.getString("COLUMN_NAME");
                 String tableName = resultSet.getString("TABLE_NAME");
+                String r_tableName = resultSet.getString("R_TABLE_NAME");
+                String r_columnName = resultSet.getString("R_COLUMN_NAME");
                 //构造约束对象
-                DbConstraintObject dbConstraintObject = new DbConstraintObject(constraintName, constraintType, columnName, tableName);
+                DbConstraintObject dbConstraintObject = new DbConstraintObject(constraintName, constraintType, columnName, tableName, r_columnName, r_tableName);
                 logger.info("获取oracle约束对象：{}", dbConstraintObject);
                 //放入约束对象数组
                 dbConstraintObjectList.add(dbConstraintObject);

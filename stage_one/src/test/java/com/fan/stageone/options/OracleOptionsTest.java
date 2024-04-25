@@ -20,21 +20,13 @@ public class OracleOptionsTest {
     private OracleOptions options = new OracleOptionsImpl();
 
     @Before
-    public void setConnection(){
-        try {
-            connection = DbUtil.getDatabaseConnection(null, DbType.ORACLE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void initConnection() throws Exception{
+        connection = DbUtil.getDatabaseConnection(null, DbType.ORACLE);
     }
 
     @After
-    public void closeConnection(){
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void closeConnection() throws Exception{
+        connection.close();
     }
 
     @Test

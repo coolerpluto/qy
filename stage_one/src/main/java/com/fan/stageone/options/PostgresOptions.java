@@ -10,21 +10,21 @@ import java.util.List;
 import java.util.Map;
 
 public interface PostgresOptions extends DbOptions{
-    Map<String, String> getTableDDL(List<DbTableObject> objectList);
+    List<String> getTableDDL(List<DbTableObject> objectList);
 
     Map<String, List<String>> getConstraintDDL(List<DbConstraintObject> objectList);
 
-    Map<String, List<String>> getIndexDDL(List<DbIndexObject> objectList);
+    List<String> getIndexDDL(List<DbConstraintObject> constraintObjectList ,List<DbIndexObject> indexObjectList);
 
-    void createTableByDDL(Connection connection, Map<String, String> map) throws SQLException;
+    void createTableByDDL(Connection connection, Map<String, String> map);
 
     void createConstraintByDDL(Connection connection, Map<String, List<String>> map);
 
     void createIndexByDDL(Connection connection, Map<String, List<String>> map);
 
-    void deleteConstraintByDDL(Connection connection, List<String> tableNameList);
+    void dropConstraintByDDL(Connection connection);
 
-    void deleteIndexByDDL(Connection connection, List<String> tableNameList);
+    void dropIndexByDDL(Connection connection, List<String> tableNameList);
 
-    void deleteTableByDDL(Connection connection, List<String> tableNameList);
+    void dropTableByDDL(Connection connection, List<String> tableNameList);
 }
