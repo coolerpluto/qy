@@ -18,13 +18,13 @@ public interface PostgresOptions extends DbOptions{
 
     void createTableByDDL(Connection connection, Map<String, String> map) throws SQLException;
 
-    void createConstraintByDDL(Connection connection, Map<String, List<String>>);
+    void createConstraintByDDL(Connection connection, Map<String, List<String>> map);
 
-    void createIndexByDDL(Map<String, List<String>> map);
+    void createIndexByDDL(Connection connection, Map<String, List<String>> map);
 
-    void deleteConstraintByDDL(List<String> tableNameList);
+    void deleteConstraintByDDL(Connection connection, List<String> tableNameList);
 
-    void deleteIndexByDDL(List<String> tableNameList);
+    void deleteIndexByDDL(Connection connection, List<String> tableNameList);
 
-    void deleteTableByDDL(List<String> tableNameList);
+    void deleteTableByDDL(Connection connection, List<String> tableNameList);
 }

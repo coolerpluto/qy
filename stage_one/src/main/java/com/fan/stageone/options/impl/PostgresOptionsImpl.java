@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PostgresOptionsImpl implements PostgresOptions {
 
@@ -42,11 +39,56 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public Map<String, List<String>> getConstraintDDL(List<DbConstraintObject> objectList) {
-        Map<String, DbConstraintObject> constraintObjectMap = new HashMap<>();
-        for (DbConstraintObject dbConstraintObject : objectList) {
-            if (constraintObjectMap.containsKey((String)dbConstraintObject.getConstraintName())){
-
+        Map<String, List<DbConstraintObject>> constraintObjectMap = new HashMap<>();
+        for (DbConstraintObject object : objectList) {
+            List<DbConstraintObject> dbConstraintObjectList;
+            if (constraintObjectMap.containsKey(object.getConstraintName())){
+                dbConstraintObjectList = constraintObjectMap.get(object.getConstraintName());
+                dbConstraintObjectList.add(object);
+            }else {
+                dbConstraintObjectList = new ArrayList<>();
+                dbConstraintObjectList.add(object);
+                constraintObjectMap.put(object.getConstraintName(), dbConstraintObjectList);
             }
+        }
+        System.out.println(constraintObjectMap);
+        Map<String, List<String>> map = new HashMap<>();
+        for (Map.Entry<String, List<DbConstraintObject>> entry : constraintObjectMap.entrySet()) {
+            String tableName = null;
+            String constraintName = entry.getKey();
+            String constraintType = null;
+            StringBuilder affectColumn = new StringBuilder("(");
+            List<DbConstraintObject> constraintObjectList = entry.getValue();
+            if (constraintObjectList.size() > 1){
+                for (DbConstraintObject dbConstraintObject : constraintObjectList) {
+                    tableName = dbConstraintObject.getTableName();
+                    constraintType = dbConstraintObject.getConstraintType();
+                    affectColumn.append(dbConstraintObject.getColumnName())
+                            .append(", ");
+                }
+                affectColumn.delete(affectColumn.length() - 2, affectColumn.length()).append(")");
+            }else {
+                DbConstraintObject constraintObject = constraintObjectList.get(0);
+                tableName = constraintObject.getTableName();
+                constraintType = constraintObject.getConstraintType();
+                affectColumn.append(constraintObject.getColumnName())
+                        .append(")");
+            }
+            StringBuilder builder = new StringBuilder("ALTER TABLE ");
+            builder.append(tableName)
+                    .append(" ADD CONSTRAINT ")
+                    .append(constraintName);
+            if ("P".equals(constraintType.toUpperCase())){
+                builder.append(" PRIMARY KEY ")
+                        .append(affectColumn);
+            }else if ("U".equals(constraintType.toUpperCase())){
+                builder.append(" UNIQUE ")
+                        .append(affectColumn);
+            }else if ("R".equals(constraintType.toUpperCase())){
+                builder.append(" FOREIGN KEY ")
+                        .append(affectColumn);
+            }
+            System.out.println(builder.toString());
         }
         return null;
     }
@@ -85,27 +127,46 @@ public class PostgresOptionsImpl implements PostgresOptions {
     }
 
     @Override
-    public void createConstraintByDDL(Connection connection, Map<String, List<String>>) {
+    public void createConstraintByDDL(Connection connection, Map<String, List<String>> map) {
 
     }
 
     @Override
-    public void createIndexByDDL(Map<String, List<String>> map) {
+    public void createIndexByDDL(Connection connection, Map<String, List<String>> map) {
 
     }
 
     @Override
-    public void deleteConstraintByDDL(List<String> tableNameList) {
+    public void deleteConstraintByDDL(Connection connection, List<String> tableNameList) {
+        try (Statement statement = connection.createStatement()) {
+            connection.setAutoCommit(false);
+            List<DbConstraintObject> dbConstraintObjectList = getDbConstraintObjectList(connection);
+            Collections.sort(dbConstraintObjectList, PgUtil.ConstraintTypeSort());
+            for (DbConstraintObject dbConstraintObject : dbConstraintObjectList) {
+                String deleteConstraintSql = "ALTER TABLE " + dbConstraintObject.getTableName() + " DROP CONSTRAINT  " + dbConstraintObject.getConstraintName();
+                statement.addBatch(deleteConstraintSql);
+            }
+            statement.executeBatch();
+            connection.commit();
+            logger.info("已删除所有约束");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void deleteIndexByDDL(Connection connection, List<String> tableNameList) {
 
     }
 
     @Override
-    public void deleteIndexByDDL(List<String> tableNameList) {
-
-    }
-
-    @Override
-    public void deleteTableByDDL(List<String> tableNameList) {
+    public void deleteTableByDDL(Connection connection, List<String> tableNameList) {
 
     }
 
@@ -143,11 +204,44 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public List<DbConstraintObject> getDbConstraintObjectList(Connection connection) {
-        return null;
+        List<DbConstraintObject> constraintObjectList = new ArrayList<>();
+        try(PreparedStatement statement = connection.prepareStatement(PostgresSql.QUERY_SINGLE_CONSTRAINT)) {
+            List<String> tableNameList = getDbTableNameList(connection);
+            for (String tableName : tableNameList) {
+                statement.setString(1, tableName);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()){
+                    String constraint_name = resultSet.getString("constraint_name");
+                    String constraint_type = resultSet.getString("constraint_type");
+                    String table_name = resultSet.getString("table_name");
+                    String columnName = resultSet.getString("column_name");
+                    DbConstraintObject dbConstraintObject = new DbConstraintObject(constraint_name, constraint_type, columnName, table_name);
+                    logger.info("获取postgres约束对象{}", dbConstraintObject);
+                    constraintObjectList.add(dbConstraintObject);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return constraintObjectList;
     }
 
     @Override
     public List<DbViewObject> getDbViewObjectList(Connection connection) {
         return null;
+    }
+}
+
+class PgUtil{
+
+    public static Comparator<DbConstraintObject> ConstraintTypeSort(){
+        Comparator<DbConstraintObject> comparator = new Comparator<DbConstraintObject>() {
+            @Override
+            public int compare(DbConstraintObject o1, DbConstraintObject o2) {
+                String sortDefine = "FPU";
+                return sortDefine.indexOf(o1.getConstraintType().toUpperCase().charAt(0)) - sortDefine.indexOf(o2.getConstraintType().toUpperCase().charAt(0));
+            }
+        };
+        return comparator;
     }
 }

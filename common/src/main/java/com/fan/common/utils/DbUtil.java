@@ -31,7 +31,6 @@ public class DbUtil {
         try(InputStream fis = DbUtil.class.getClassLoader().getResourceAsStream(path)) {
             properties.load(fis);
         } catch (FileNotFoundException e) {
-
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
