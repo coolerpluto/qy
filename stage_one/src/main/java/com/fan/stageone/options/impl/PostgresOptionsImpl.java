@@ -20,10 +20,12 @@ public class PostgresOptionsImpl implements PostgresOptions {
         Map<String, String > map = new HashMap<>();
         for (DbTableObject tableObject : objectList) {
             String tableName = tableObject.getTableName();
-            StringBuilder builder = new StringBuilder("CREATE TABLE "+tableName+"(");
+            StringBuilder builder = new StringBuilder("CREATE TABLE \""+tableName+"\"(");
             List<DbColumnObject> columnObjectList = tableObject.getDbColumnObjectList();
             for (DbColumnObject columnObject : columnObjectList) {
-                builder.append(columnObject.getColumnName())
+                builder.append("\"")
+                        .append(columnObject.getColumnName())
+                        .append("\"")
                         .append(" ")
                         .append(ColumnConvertDict.columnTypeConvert(columnObject.getColumnType()))
                         .append("(")
@@ -63,7 +65,9 @@ public class PostgresOptionsImpl implements PostgresOptions {
                 for (DbConstraintObject dbConstraintObject : constraintObjectList) {
                     tableName = dbConstraintObject.getTableName();
                     constraintType = dbConstraintObject.getConstraintType();
-                    affectColumn.append(dbConstraintObject.getColumnName())
+                    affectColumn.append("\"")
+                            .append(dbConstraintObject.getColumnName())
+                            .append("\"")
                             .append(", ");
                 }
                 affectColumn.delete(affectColumn.length() - 2, affectColumn.length()).append(")");
@@ -71,13 +75,17 @@ public class PostgresOptionsImpl implements PostgresOptions {
                 DbConstraintObject constraintObject = constraintObjectList.get(0);
                 tableName = constraintObject.getTableName();
                 constraintType = constraintObject.getConstraintType();
-                affectColumn.append(constraintObject.getColumnName())
+                affectColumn.append("\"")
+                        .append(constraintObject.getColumnName())
+                        .append("\"")
                         .append(")");
             }
-            StringBuilder builder = new StringBuilder("ALTER TABLE ");
+            StringBuilder builder = new StringBuilder("ALTER TABLE \"");
             builder.append(tableName)
-                    .append(" ADD CONSTRAINT ")
-                    .append(constraintName);
+                    .append("\"")
+                    .append(" ADD CONSTRAINT \"")
+                    .append(constraintName)
+                    .append("\"");
             if ("P".equals(constraintType.toUpperCase())){
                 builder.append(" PRIMARY KEY ")
                         .append(affectColumn);
