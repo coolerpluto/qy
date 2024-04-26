@@ -54,12 +54,14 @@ public class PostgresOptionsTest {
     @Test
     public void getIndexDDL() {
         List<DbIndexObject> dbIndexObjectList = oracleOptions.getDbIndexObjectList(oracleConnection);
+        List<DbConstraintObject> dbConstraintObjectList = oracleOptions.getDbConstraintObjectList(oracleConnection);
+        postgresOptions.getIndexDDL(dbConstraintObjectList, dbIndexObjectList);
     }
 
     @Test
     public void createTableByDDL() {
         List<DbTableObject> dbTableObjectList = oracleOptions.getDbTableObjectList(oracleConnection);
-        Map<String, String> ddl = postgresOptions.getTableDDL(dbTableObjectList);
+        List<String > ddl = postgresOptions.getTableDDL(dbTableObjectList);
         postgresOptions.createTableByDDL(postConnection, ddl);
     }
 

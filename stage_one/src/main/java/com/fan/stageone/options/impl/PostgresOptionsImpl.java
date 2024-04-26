@@ -3,9 +3,7 @@ package com.fan.stageone.options.impl;
 import com.fan.common.convert.ColumnConvertDict;
 import com.fan.common.entity.*;
 import com.fan.common.sql.PostgresSql;
-import com.fan.stageone.options.DbOptions;
 import com.fan.stageone.options.PostgresOptions;
-import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +16,7 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public List<String> getTableDDL(List<DbTableObject> objectList) {
-        List<String> ddlList = new ArrayList<>();
+        List<String> ddlList = new ArrayList<>();//用 linkedlist更好些
         for (DbTableObject tableObject : objectList) {
             String tableName = tableObject.getTableName();
             StringBuilder builder = new StringBuilder("CREATE TABLE \""+tableName+"\"(");
@@ -30,7 +28,7 @@ public class PostgresOptionsImpl implements PostgresOptions {
                         .append(" ")
                         .append(ColumnConvertDict.columnTypeConvert(columnObject.getColumnType()))
                         .append("(")
-                        .append(columnObject.getColumnSize())
+                        .append(columnObject.getColumnSize())//还有精度、大小
                         .append("), ");
             }
             String ddl = builder.delete(builder.length() - 2, builder.length()).append(")").toString();
@@ -42,6 +40,7 @@ public class PostgresOptionsImpl implements PostgresOptions {
 
     @Override
     public Map<String, List<String>> getConstraintDDL(List<DbConstraintObject> objectList) {
+        //
         Map<String, List<DbConstraintObject>> constraintObjectMap = new HashMap<>();
         for (DbConstraintObject object : objectList) {
             List<DbConstraintObject> dbConstraintObjectList;
@@ -67,42 +66,25 @@ public class PostgresOptionsImpl implements PostgresOptions {
             StringBuilder affectColumn = new StringBuilder("(");
             StringBuilder affectRColumn = new StringBuilder("(");
             List<DbConstraintObject> constraintObjectList = entry.getValue();
-            if (constraintObjectList.size() > 1){
-                for (DbConstraintObject dbConstraintObject : constraintObjectList) {
-                    tableName = dbConstraintObject.getTableName();
-                    constraintType = dbConstraintObject.getConstraintType();
-                    affectColumn.append("\"")
-                            .append(dbConstraintObject.getColumnName())
+            for (DbConstraintObject dbConstraintObject : constraintObjectList) {
+                tableName = dbConstraintObject.getTableName();
+                constraintType = dbConstraintObject.getConstraintType();
+                affectColumn.append("\"")
+                        .append(dbConstraintObject.getColumnName())
+                        .append("\"")
+                        .append(", ");
+                if (dbConstraintObject.getR_tableName() != null){
+                    rTableName = dbConstraintObject.getR_tableName();
+                    affectRColumn.append("\"")
+                            .append(dbConstraintObject.getR_columnName())
                             .append("\"")
                             .append(", ");
-                    if (dbConstraintObject.getR_tableName() != null){
-                        rTableName = dbConstraintObject.getR_tableName();
-                        affectRColumn.append("\"")
-                                .append(dbConstraintObject.getR_columnName())
-                                .append("\"")
-                                .append(", ");
-                    }
-                }
-                if (rTableName != null){
-                    affectRColumn.delete(affectRColumn.length() - 2, affectRColumn.length()).append(")");
-                }
-                affectColumn.delete(affectColumn.length() - 2, affectColumn.length()).append(")");
-            }else {
-                DbConstraintObject constraintObject = constraintObjectList.get(0);
-                tableName = constraintObject.getTableName();
-                constraintType = constraintObject.getConstraintType();
-                affectColumn.append("\"")
-                        .append(constraintObject.getColumnName())
-                        .append("\"")
-                        .append(")");
-                if (constraintObject.getR_tableName() != null){
-                    rTableName = constraintObject.getR_tableName();
-                    affectRColumn.append("\"")
-                            .append(constraintObject.getR_columnName())
-                            .append("\"")
-                            .append(")");
                 }
             }
+            if (rTableName != null){
+                affectRColumn.delete(affectRColumn.length() - 2, affectRColumn.length()).append(")");
+            }
+            affectColumn.delete(affectColumn.length() - 2, affectColumn.length()).append(")");
             StringBuilder builder = new StringBuilder("ALTER TABLE \"");
             builder.append(tableName)
                     .append("\"")
@@ -138,24 +120,57 @@ public class PostgresOptionsImpl implements PostgresOptions {
     @Override
     public List<String> getIndexDDL(List<DbConstraintObject> constraintObjectList, List<DbIndexObject> indexObjectList) {
         List<String> ddlList = new ArrayList<>();
+        Map<String, List<DbIndexObject>> indexMap = new HashMap<>();
         for (int i = 0; i < indexObjectList.size(); i++){
             for (int k = 0; k < constraintObjectList.size(); k++){
-                if (!indexObjectList.get(i).getIndexName().equals(constraintObjectList.get(k).getConstraintName())){
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("CREATE")
+                DbIndexObject dbIndexObject = indexObjectList.get(i);
+                DbConstraintObject dbConstraintObject = constraintObjectList.get(k);
+                if (!dbIndexObject.getIndexName().equals(dbConstraintObject.getConstraintName())
+                        && "PUR".indexOf(dbConstraintObject.getConstraintType().toUpperCase()) < 0){
+                    if (indexMap.containsKey(dbIndexObject.getIndexName())){
+                        indexMap.get(dbIndexObject.getIndexName()).add(dbIndexObject);
+                    }else{
+                        List<DbIndexObject> columnSingle = new ArrayList<>();
+                        columnSingle.add(dbIndexObject);
+                        indexMap.put(dbIndexObject.getIndexName(), columnSingle);
+                    }
                 }
             }
         }
-        return null;
+        for (Map.Entry<String, List<DbIndexObject>> entry : indexMap.entrySet()) {
+            StringBuilder builder = new StringBuilder("CREATE INDEX ");
+            builder.append("\"")
+                    .append(entry.getKey())
+                    .append("\" ON \"")
+                    .append(entry.getValue().get(0).getTableName())
+                    .append("\"");
+            List<DbIndexObject> indexObjects = entry.getValue();
+            StringBuilder affectColumnBuilder = new StringBuilder(" (");
+            for (DbIndexObject indexObject : indexObjects) {
+                affectColumnBuilder.append("\"")
+                        .append(indexObject.getColumnName())
+                        .append("\"")
+                        .append(", ");
+            }
+            String affectColumn = affectColumnBuilder.delete(affectColumnBuilder.length() - 2, affectColumnBuilder.length()).append(")").toString();
+            String ddl = builder.append(affectColumn).toString();
+            logger.info("索引创建语句：{}", ddl);
+            ddlList.add(ddl);
+        }
+        return ddlList;
     }
 
     @Override
-    public void createTableByDDL(Connection connection, Map<String, String> map){
+    public void createTableByDDL(Connection connection, List<String> ddlList){
         try(Statement statement = connection.createStatement()) {
             connection.setAutoCommit(false);
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                statement.addBatch(entry.getValue());
-            }
+            ddlList.forEach(ddl->{
+                try {
+                    statement.addBatch(ddl);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
             int[] ints = statement.executeBatch();
             connection.commit();
             logger.info("表创建成功，个数：{}", ints.length);
@@ -218,7 +233,7 @@ public class PostgresOptionsImpl implements PostgresOptions {
             connection.commit();
         } catch (SQLException e) {
             try {
-                logger.info("创建索引失败，回滚");
+                logger.info("创建约束失败，回滚");
                 connection.rollback();
             } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
@@ -361,7 +376,6 @@ public class PostgresOptionsImpl implements PostgresOptions {
 }
 
 class PgUtil{
-
     public static Comparator<DbConstraintObject> ConstraintTypeSort(){
         Comparator<DbConstraintObject> comparator = new Comparator<DbConstraintObject>() {
             @Override

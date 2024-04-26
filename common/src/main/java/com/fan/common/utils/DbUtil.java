@@ -26,7 +26,7 @@ public class DbUtil {
 
     private static String password;
 
-    private static Properties loadProperties(String path){
+    private static void loadProperties(String path){
         properties = new Properties();
         try(InputStream fis = DbUtil.class.getClassLoader().getResourceAsStream(path)) {
             properties.load(fis);
@@ -35,7 +35,6 @@ public class DbUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return properties;
     }
 
     private static String getProperty(String key){
